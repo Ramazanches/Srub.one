@@ -1,1113 +1,610 @@
 
-	$( () => {
-	var nav = $('nav').height();
-    $('.showmenu-container').css('top', nav);
-	//On Scroll Functionality
-	$(window).scroll( () => {
-		var windowTop = $(window).scrollTop();
-		windowTop > 90 ? $('nav').addClass('navShadow') : $('nav').removeClass('navShadow');
-		var nav = $('nav').height();
-		var navShadow = $(".navShadow").height();
-		windowTop > 90 ? $('.showmenu-container').css('top', navShadow) : $('.showmenu-container').css('top', nav);
-	});
-	//Click Logo To Scroll To Top
-	$('#logo').on('click', () => {
-		$('html,body').animate({
-			scrollTop: 0
-		},500);
-	});
-	$('#hero').on('click', () => {
-		$('html,body').animate({
-			scrollTop: 0
-		},500);
-	});
-	
-	//Smooth Scrolling Using Navigation Menu
-	$('a[href*="#"]').on('click', function(e){
-		$('html,body').animate({
-			scrollTop: $($(this).attr('href')).offset().top - 50
-		},500);
+
+document.addEventListener("DOMContentLoaded", () => {
+
+'use strict';
+
+	const body = document.body,
+				header = document.querySelector('header'),
+				nav = document.querySelector('.header__nav'),
+				navHeight = nav.offsetHeight + 'px',
+				icon = document.querySelector('.menu__icon'),
+				menuBody = document.querySelector('.menu__list'),
+				gallery = document.querySelector('#gallery'),
+				social = document.querySelector('.section-1__social-md'),
+				socialBody = document.querySelector('.section-1__social');
+
+	social.onclick = () => { toggleActive(social, socialBody) }
+
+	function exec (func) {
+	  let wait = 0;
+	  let queue= [];  
+	  if (wait)  queue.push (func);
+	  else try { 
+	    func () 
+	  } 
+	  catch (err) { 
+	    console.log(err) 
+	  }
+	} 
+
+	const setHeightByWindow = () => {
+    const doc = document.documentElement;
+    doc.style.setProperty('--app-height', `${window.innerHeight}px`);		
+	}
+
+	document.querySelector('#form').onsubmit = async (e) => {
 		e.preventDefault();
-	});
-	
-	//Toggle Menu
-			$('.showmenu-container').hide();
-          $('.menu').on('click', function(){
-          	$('.menu>div').eq(1).slideToggle();
-          	$('.menu>div').eq(2).slideToggle();
-          	$('.menu>div').eq(3).slideToggle();
-          	$('.menu>div').eq(4).slideToggle();
-          	$('.showmenu-container').slideToggle();
+		let response = await fetch('mail.php', {
+		  method: 'POST',
+		  body: new FormData(formElem)
+		});
+		let result = await response.json();
+		alert(result.message);
+	};	
+ 
+	function scrollTransform() {
+		if (nav) {
+			pageYOffset >= 90 ? 
+			nav.classList.add('active') : 
+			nav.classList.remove('active');			
+		}
+	}
+
+  function createNode(el, cls, content, attr, val, attr2, val2) {
+  	let elem = document.createElement(el);
+  	if (cls) elem.className = cls;
+  	if (attr) elem.setAttribute(attr, val) 
+  	if (attr2) elem.setAttribute(attr2, val2)   	
+  	if (content) elem.append(content)
+  	return elem;
+  }
+
+	function toggleActive(i, obj) {
+		i.classList.toggle('_active');			
+		body.classList.toggle('_lock');
+		obj.classList.toggle('_active');							
+	}
+
+	function bindWidth() {
+		const getterElem = document.querySelectorAll('[data-bind]');
+		if (getterElem.length > 0) {
+			getterElem.forEach( el => {
+				const setterElem = document.querySelector(el.dataset.bind);
+				el.style.width = `${parseFloat(getComputedStyle(setterElem).width)}px`;
+			})			
+		}
+	}
+
+	function initSlider() {
+	  const swiper = new Swiper("#swiper", {
+	    grabCursor: true,
+	    keyboard: true,
+	    effect: 'cards',
+	    pagination: {
+	      el: ".swiper-pagination",
+	      clickable: true,
+	      dynamicBullets: true,
+	    },
+		  navigation: {
+	      nextEl: ".swiper-button-next",
+	      prevEl: ".swiper-button-prev",
+	    },
+		   breakpoints: {
+		   	0: {
+					effect: "creative",
+					creativeEffect: {
+						prev: {
+							shadow: true,
+							translate: ["-20%", 0, -1],
+						},
+						next: {
+							translate: ["100%", 0, 0],
+						},
+					},
+		   	},
+	      768: {
+	        effect: 'cards',
+	      }
+	    },
+	  });		
+	}
+
+	function insertIcons() {
+
+	  const iconsArr = [
+	  	{
+	  		el: document.querySelectorAll('.gallery__link'),
+	  		icon: '<svg xmlns="http://www.w3.org/2000/svg"width="24"height="24"viewBox="0 0 24 24"fill="none"stroke="currentColor"stroke-width="2"stroke-linecap="round"stroke-linejoin="round"> <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>' 
+	  	},
+	  	{
+	  		el: document.querySelectorAll('.swiper-button-prev'),
+	  		icon: '<svg version="1.1" id="Capa_1" x="0px" y="0px" width="284.929px" height="284.929px" viewBox="0 0 284.929 284.929" xml:space="preserve"><g><path d="M282.082,76.511l-14.274-14.273c-1.902-1.906-4.093-2.856-6.57-2.856c-2.471,0-4.661,0.95-6.563,2.856L142.466,174.441 L30.262,62.241c-1.903-1.906-4.093-2.856-6.567-2.856c-2.475,0-4.665,0.95-6.567,2.856L2.856,76.515C0.95,78.417,0,80.607,0,83.082 c0,2.473,0.953,4.663,2.856,6.565l133.043,133.046c1.902,1.903,4.093,2.854,6.567,2.854s4.661-0.951,6.562-2.854L282.082,89.647 c1.902-1.903,2.847-4.093,2.847-6.565C284.929,80.607,283.984,78.417,282.082,76.511z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>' 
+	  	},
+	  	{
+	  		el: document.querySelectorAll('.swiper-button-next'),
+	  		icon: '<svg version="1.1" id="Capa_1" x="0px" y="0px" width="284.929px" height="284.929px" viewBox="0 0 284.929 284.929" xml:space="preserve"><g><path d="M282.082,76.511l-14.274-14.273c-1.902-1.906-4.093-2.856-6.57-2.856c-2.471,0-4.661,0.95-6.563,2.856L142.466,174.441 L30.262,62.241c-1.903-1.906-4.093-2.856-6.567-2.856c-2.475,0-4.665,0.95-6.567,2.856L2.856,76.515C0.95,78.417,0,80.607,0,83.082 c0,2.473,0.953,4.663,2.856,6.565l133.043,133.046c1.902,1.903,4.093,2.854,6.567,2.854s4.661-0.951,6.562-2.854L282.082,89.647 c1.902-1.903,2.847-4.093,2.847-6.565C284.929,80.607,283.984,78.417,282.082,76.511z"/></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>' 
+	  	},
+	  ];  	
+
+		iconsArr.forEach(arr => {
+				arr.el.forEach(el => {
+					if (el) el.insertAdjacentHTML('beforeend', arr.icon);				
+				})				
+		})
+	}	
+
+	const dB = {
+		path: 'img/Проекты',
+		labels: {
+			date: 'Год',
+			area: 'Место производства',
+			service: 'Вид услуги',
+			type: 'Тип рубки',
+			size: 'Размер сруба',
+			button: 'Посмотреть',
+		},
+		menu: {
+			menuList: document.querySelector('.menu__list'),
+			itemClass: 'menu__item',
+			linkClass: 'menu__link',
+
+			items: [
+				{ text: 'ГЛАВНАЯ', goto: '#section_1' },
+				{ text: 'УСЛУГИ', goto: '#section_2' },
+				{ text: 'ПРОЕКТЫ', goto: '#section_3' },
+				{ text: 'КОНТАКТЫ', goto: '#footer' },
+			],
+
+			generate() {
+				this.items.forEach( item => {
+					let link = createNode('a', this.linkClass, item.text, 'data-goto', item.goto, 'href', '#');
+					this.menuList.append(createNode('li', this.itemClass, link));
+				})
+			},
+		},
+		section_1: {
+			wrapper: document.querySelector('.section-1__wrapper'),
+			listClassName: 'section-1__list',
+			title: { 
+				titleText: 'Дома и бани ручной рубки', 
+				titleClass: 'section-1__title', 
+			},
+			text: {
+				listClassName: 'section-1__list',
+				itemClassName: 'section-1__item',
+				itemContent: ['в лапу', 'в нижнюю чашу', 'в верхнюю чашу', 'в диком стиле'],
+			},
+			generate() {
+
+				let titleClass = this.title.titleClass,
+						titleText = this.title.titleText,
+						itemClass = this.text.itemClassName,
+						itemContent = this.text.itemContent,
+						listClass = this.listClassName;
+
+				this.wrapper.append(createNode('h1', titleClass, titleText));
+
+				const list = createNode('ul', listClass)
+
+				for (let i = 0; i < itemContent.length; i++) {
+					let text = itemContent[i];
+					let item = createNode('li', itemClass, text);		
+					list.append(item);			
+				}
+
+				this.wrapper.append(list);
+
+			},
+		},
+		projects: [
+			{
+				id: 0,
+				folder: '/сруб1/',
+				title: 'Сруб',
+				description: 'Производство и укладка сруба',
+				location: 'Белорецкий район',
+				date: '2016',
+				service: 'Укладка сруба',
+				cabinType: 'Дикая',
+				sortType: '3',
+				size: '6х8',
+				images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',],
+			},
+			{
+				id: 1,
+				folder: '/сруб2/',
+				title: 'Сруб',
+				description: 'Производство и укладка сруба',
+				location: 'Бурзянский район',
+				date: '2018',
+				service: 'Укладка сруба',
+				cabinType: 'В лапу',
+				sortType: '2',
+				size: '7х9',
+				images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpg', '23.jpg', ],		
+			},
+			{
+				id: 2,
+				folder: '/сруб1/',
+				title: 'Сруб',
+				description: 'Производство и укладка сруба',
+				location: 'Шаранский район',
+				date: '2015',
+				service: 'Укладка сруба',
+				cabinType: 'В чашу',
+				sortType: '1',
+				size: '6х7',
+				images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',],
+			},
+			{
+				id: 3,
+				folder: '/сруб2/',
+				title: 'Крыша',
+				description: 'Укладка сруба + кровельные работы (Осоргино)',
+				location: 'Кугарчинский район',
+				date: '2017',
+				service: 'Кровля крыши',
+				cabinType: 'В лапу',
+				sortType: '4',
+				size: '7х9',
+				images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpg', '23.jpg', ],
+			},
+			{
+				id: 4,
+				folder: '/сруб1/',
+				title: 'Сруб',
+				description: 'Производство и укладка сруба',
+				location: 'Архангельский район',
+				date: '2016',
+				service: 'Укладка сруба',
+				cabinType: 'Дикая',
+				sortType: '3',
+				size: '6х6',
+				images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',],
+			},
+			{
+				id: 5,
+				folder: '/сруб2/',
+				title: 'Сруб',
+				description: 'Производство и укладка сруба',
+				location: 'Белебеевский район',
+				date: '2019',
+				service: 'Укладка сруба',
+				cabinType: 'В чашу',
+				sortType: '1',
+				size: '7х7',
+				images: ['1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg', '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg', '17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpg', '23.jpg', ],
+			},
+		],
+		banners: {
+			left: document.querySelector('#section_2').firstElementChild.lastElementChild,
+			right: document.querySelector('#section_2').lastElementChild.lastElementChild,
+
+			title: 'section-2__title',
+			thumb: 'section-2__title__thumb',
+			image: 'section-2__title__image',
+			path: './img/icons/',
+
+      left_title: 'Доставка сруба',
+			left_image: 'truck.ico',
+			left_container: 'section-2__text',
+			left_content: `Доставка сруба от производственной площадки до Вашего участка осуществляется КАМАЗами — длинномерами с полуприцепом длиной 13,6 метров. Грузоподъемность — 20 тонн. 
+        В садовые участки, куда не может проехать КАМАЗ, сруб перегружаем и завозим на манипуляторе — вездеходе (срубы размерами до 6х8, 7х7 метров).`,
+      
+      right_title: 'Монтаж сруба',
+      right_image: 'townhouse.ico',
+			right_container: 'section-2__list',        
+      right__content: [
+				'Разгрузка и монтаж сруба осуществляется Краном-манипулятором.',
+				'Сборку осуществляет бригада, имеющая многолетний опыт сборки срубов разных размеров и конфигураций.',
+				'Сборку осуществляет бригада, которая рубила сруб!',
+				'Для сборки сруба используются специальные когти (ножницы) для охвата бревна.',
+				'Стоимость монтажа (сборки) сруба зависит от размеров сруба (в среднем составляет 30% от стоимости сруба).',
+      	],
+      generate() {
+				//Путь иконки
+      	const left_path = this.path+this.left_image;
+      	//Генерация иконки
+      	const left_icon = createNode('img', this.image, '', 'src', left_path, 'alt', left_path)
+      	const left_thumb = createNode('div', this.thumb, left_icon)  
+
+      	this.left.append(createNode('div', this.title, this.left_title));
+      	this.left.firstElementChild.append(left_thumb);      	
+      	this.left.append(createNode('div', this.left_container, this.left_content))
+      	this.left.firstElementChild.append(left_thumb); //section-2__title + section-2__title__thumb
+
+				this.right.append(createNode('div', this.title, this.right_title))
+				//Путь иконки				
+      	const right_path = this.path+this.right_image;
+      	//Генерация иконки
+      	const right_icon = createNode('img', this.image, '', 'src', right_path, 'alt', right_path)
+      	const right_thumb = createNode('div', this.thumb, right_icon)
+
+				//section-2__title + section-2__title__thumb
+      	this.right.firstElementChild.append(right_thumb); 
+      	let list = createNode('ul', this.right_container);
+      	this.right__content.forEach( content => {
+      	list.append(createNode('li', 'section-2__item', content));
+      	})
+
+				this.right.append(list) 
+      }
+		}
+
+  };
+
+	function generateGallery() {
+		for (let i = 0; i < dB.projects.length; i++) {
+			const p = dB.projects[i];
+			const template = `
+			<div class="gallery__item" id="link" data-sort='${p.sortType}' data-modal="modal-${dB.projects[i].id + 1}" style="background: url(${dB.path + p.folder + p.images[0]})  0 0 / cover no-repeat;"
+			data-id="${dB.projects[i].id}">
+        <div class="gallery__text">
+          <div class="gallery__description">
+            <h2 class="gallery__description__title">${p.title + ' ' + p.size}</h2>
+            <p class="gallery__description__text">${p.description}</p></div>
+          <div class="gallery__link">${dB.labels.button}</div>
+        </div>
+      </div>`;
+      if (gallery) gallery.insertAdjacentHTML('beforeend', template);
+		}
+	}		
+
+	function generateSlider() {
+		for (let i = 0; i < dB.projects.length; i++) {
+			const p = dB.projects[i];
+			const sliderTemplate = `
+				<div id="modal-${p.id + 1}" class="section-3__modal modal__section-3">
+		      <div class="modal__wrapper">
+		        <a href="" onclick="event.preventDefault()" class="modal__close close-modal">X</a>
+		        <!-- Слайдер -->
+		        <div class="modal__slider slider__modal swiper" id="swiper">
+		          <div class="slider__wrapper swiper-wrapper"><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[0]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[1]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[2]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[3]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[4]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[5]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[6]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[7]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[8]}" alt="" class="slider__img"></div><div class="slider__item swiper-slide"><img src="${dB.path + p.folder + p.images[9]}" alt="" class="slider__img"></div>
+		          </div>
+		          <div class="swiper-button-prev"></div>
+		          <div class="swiper-button-next"></div>
+		          <div class="swiper-pagination"></div>
+		        </div>
+		        <!-- Контент -->
+		        <div class="modal__content content__modal">
+			  			<div class="content__value">
+		            <span>${dB.labels.date}:</span>
+		            <a href="">${p.date}</a>
+		          </div>
+		          <div class="content__value">
+		            <span>${dB.labels.area}:</span>
+		            <a href="">${p.location}</a>
+		          </div>
+		          <div class="content__value">
+		            <span>${dB.labels.service}:</span>
+		            <a href="">${p.service}</a>
+		          </div>
+		          <div class="content__value">
+		            <span>${dB.labels.type}:</span>
+		            <a href="">${p.cabinType}</a>
+		          </div>
+		          <div class="content__value">
+		            <span>${dB.labels.size}:</span>
+		            <a href="">${p.size}</a>
+		          </div>
+		        </div>
+		      </div>
+		    </div>`;
+
+	    if (gallery) gallery.insertAdjacentHTML('beforeend', sliderTemplate); 
+		}
+	}
+
+	function sortGallery() {
+		document.querySelector('#category').addEventListener('click', function(e) {
+		document.querySelectorAll('.gallery__item').forEach( item => {			
+				if (item.dataset.sort !== e.target.dataset.sort) {
+					item.style.display = "none";
+				}
+				else {
+					item.style.display = "block"
+				}
+				if (e.target.dataset.sort === '5') item.style.display = "block";
+			})
+		})		
+	}
+
+
+	function popupToggler() {
+		const	lockPadding = document.querySelectorAll('.lock-padding'),
+					links = document.querySelectorAll('#link'),
+					closeIcon = document.querySelectorAll('.close-modal'),
+					timeout = 800; 	
+			let unlock = true;
+
+		if (links.length > 0) {
+			links.forEach( link => {
+				link.addEventListener('click', function (e) {
+					popupOpen(document.getElementById(link.dataset.modal));
+					e.preventDefault();						
+				});
+			})
+		}
+
+		if (closeIcon.length > 0) {
+			closeIcon.forEach( close => {
+				close.addEventListener('click', function (e) {
+					popupClose(close.closest('.modal__section-3'));
+					e.preventDefault();
+				})			
+			})
+		}
+
+		function popupOpen(currentPopup) {
+			const popupActive = document.querySelector('.modal__section-3.open');
+			if (currentPopup && unlock) {
+				if (popupActive) popupClose(popupActive, false); //doUnlock=false блокируем скроллинг окна под окном }
+				else bodyLock(); 
+				currentPopup.classList.add('open');
+				currentPopup.addEventListener('click', function (e) {
+					if (!e.target.closest('.modal__wrapper')) {
+						popupClose(e.target.closest('.modal__section-3'));
+					}
+				});
+			}
+		}
+
+		function popupClose(popupActive, doUnlock = true) {
+			if (unlock) {
+				popupActive.classList.remove('open'); //При открытии нового окна закрываем открытое (родительское)
+				if (doUnlock) {
+					bodyUnLock(); 
+				}	
+			}
+		}
+
+		function bodyLock() {
+			const lockPaddingValue = window.innerWidth - document.querySelector('body').offsetWidth + 'px';
+			lockPaddingToggle(lockPadding, lockPaddingValue);
+			body.classList.add('lock');
+			body.style.paddingRight = lockPaddingValue;
+			preventDbClick();
+		}
+
+		function lockPaddingToggle(items, val) {
+			if (items.length > 0) {
+				items.forEach(item => {
+					item.style.paddingRight = val;
+				})			
+			}
+		}
+
+		function bodyUnLock() {
+			setTimeout(function () {
+				lockPaddingToggle(lockPadding, '0px');
+				body.style.paddingRight = '0px';			
+				body.classList.remove('lock');
+			}, timeout);
+			preventDbClick();
+		}
+
+
+		function preventDbClick() {
+			unlock = false;		//Прерываем двойное нажатие на попап-кнопку
+			setTimeout(function () {
+				unlock = true;
+			}, timeout);
+		};
+
+		document.addEventListener('keydown', function (e) {
+			if (e.which === 27) {
+				popupClose(popupActive);
+			}
 		});
 
-	
-$('.first').click(function(){
-$(".gallery").show();
-$('.items').empty();
-$('.wrap').css('display', 'none');
-$('.wrap').children().css('display', 'none');
-if($(window).width() >= 960){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(11, 18.4vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr 1fr 1fr');
-}
-if($(window).width() <= 960){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(16, 25.35vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr 1fr');
-}
-if($(window).width() <= 576){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(31, 55.5vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr');
-}
-});
+		(function () {
+			if (!Element.prototype.closest) {
+				Element.prototype.closest = function (css) {
+					var node = this;
+					while (node) {
+						if (node.matches(css)) return node;
+						else node = node.parentElement;
+					}
+					return null;
+				};
+			}
+		})();
+
+		(function () {
+			if (!Element.prototype.matches) {
+				Element.prototype.matches = Element.prototype.matchesSelector ||
+				Element.prototype.webkitMathesSelector ||
+				Element.prototype.mozMathesSelector ||
+				Element.prototype.msMathesSelector;
+			}
+		}) 
+	}
+
+	const isMobile = {
+		Android: function () {
+			return navigator.userAgent.match(/Android/i);
+		},
+		BlackBerry: function () {
+			return navigator.userAgent.match(/BlackBerry/i);
+		},
+		iOS: function () {
+			return navigator.userAgent.match(/iOS/i);
+		},
+		Opera: function () {
+			return navigator.userAgent.match(/Opera/i);
+		},
+		Windows: function () {
+			return navigator.userAgent.match(/Windows/i);
+		},
+		any: function () {
+			return (
+				isMobile.Android() ||
+				isMobile.BlackBerry() ||
+				isMobile.iOS() ||
+				isMobile.Opera() ||
+				isMobile.Windows());
+		}
+	};
+		
+	function menuToggler() {
+		const menuLinks = document.querySelectorAll('[data-goto]');
+		if (isMobile.any()) body.classList.add('_touch');
+		else body.classList.add('_pc'); 
+		if (icon) { icon.onclick = () => { toggleActive(icon, menuBody); } }
+		if (menuLinks.length > 0) {
+			menuLinks.forEach(menuLink => {
+				if (menuLink) menuLink.addEventListener('click', onMenuLinkClick);
+			})
+		}
+
+		function onMenuLinkClick(e) {
+			const	data = e.target.dataset.goto,
+						dataNode = document.querySelector(data);
+			if (data && dataNode) {
+				const gotoBlockValue = dataNode.getBoundingClientRect().top + pageYOffset - document.querySelector('header').offsetHeight;
+
+			toggleActive(icon, menuBody);
+
+			window.scrollTo({
+				top: gotoBlockValue,
+				behavior: "smooth"
+			});
+			e.preventDefault();
+			}
+		} 
+  }
+
+
+
+	window.addEventListener('resize', bindWidth, setHeightByWindow)
+
+	window.addEventListener('scroll', scrollTransform);
+
+  window.addEventListener('load', () => {
+		
+			exec( () => {
+		 		dB.banners.generate();
+				dB.menu.generate();
+				dB.section_1.generate(); 				
+		  	generateGallery();
+		  	sortGallery();
+				generateSlider();  	
+		  	popupToggler();
+		  	initSlider();
+		  	bindWidth();			
+			})
+
+	  	setTimeout( () => { 
+				exec( () => {
+			  	menuToggler();  		
+		  		insertIcons(); 
+		  	});
+	  	});  		
 
-$('.second').click(function(){
-	$('.gallery').hide();
-	$('.items').empty();
-    $('.wrap').css('display', 'none');
-    $('.wrap').children().css('display', 'none');
-	$(".contain-10").show();
-	$(".contain-11").show();
-	$(".contain-12").show();
-	$(".contain-13").show();
-	$(".contain-14").show();
-	$(".contain-15").show();
-	$(".contain-16").show();
-	$(".contain-17").show();
-	$(".contain-18").show();
-	$(".contain-19").show();
-if($(window).width() >= 960){
-$(".gallery-container-center").css('grid-template-rows', 'repeat(4, 18.4vw)');
-$(".gallery-container-center").css('grid-template-columns', '1fr 1fr 1fr');
-}
-if($(window).width() <= 960){
-$(".gallery-container-center").css('grid-template-rows', 'repeat(5, 25.35vw)');
-$(".gallery-container-center").css('grid-template-columns', '1fr 1fr');
-}
-if($(window).width() <= 576){
-$(".gallery-container-center").css('grid-template-rows', 'repeat(10, 55.5vw)');
-$(".gallery-container-center").css('grid-template-columns', '1fr');
-}
-});
 
-$('.third').click(function(){
-	$('.gallery').hide();
-    $('.items').empty();
-$('.wrap').css('display', 'none');
-$('.wrap').children().css('display', 'none');
-if($(window).width() >= 960){
-$(".gallery-container-center").css('grid-template-rows', '18.4vw)');
-$(".gallery-container-center").css('grid-template-columns', '1fr');
-}
-});
+  	
+  });
 
-$('.fourth').click(function(){
-	$('.gallery').hide();
-	$('.items').empty();
-$('.wrap').css('display', 'none');
-$('.wrap').children().css('display', 'none');
-	$(".contain-20").show();
-	$(".contain-21").show();
-	$(".contain-22").show();
-	$(".contain-23").show();
-	$(".contain-24").show();
-	$(".contain-25").show();
-	$(".contain-26").show();
-	$(".contain-27").show();
-	$(".contain-28").show();
-	$(".contain-29").show();
-	if($(window).width() >= 960){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(4, 18.4vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr 1fr 1fr');
-}
-	if($(window).width() <= 960){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(5, 25.35vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr 1fr');
-}
-if($(window).width() <= 576){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(10, 55.5vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr');
-}
-});
-
-
-$('.fifth').click(function(){
-	$('.gallery').hide();
-	$('.items').empty();
-$('.wrap').css('display', 'none');
-$('.wrap').children().css('display', 'none');
-	$(".contain").show();
-	$(".contain-1").show();
-	$(".contain-2").show();
-	$(".contain-3").show();
-	$(".contain-4").show();
-	$(".contain-5").show();
-	$(".contain-6").show();
-	$(".contain-7").show();
-	$(".contain-8").show();
-	$(".contain-9").show();
-		if($(window).width() >= 960){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(4, 18.4vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr 1fr 1fr');
-}
-	if($(window).width() <= 960){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(5, 25.35vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr 1fr');
-}
-if($(window).width() <= 576){
-	$(".gallery-container-center").css('grid-template-rows', 'repeat(10, 55.5vw)');
-	$(".gallery-container-center").css('grid-template-columns', '1fr');
-}
-});
-
-$('.sixth').click(function(){
-	$('.gallery').hide();
-	$('.items').empty();
-$('.wrap').css('display', 'none');
-$('.wrap').children().css('display', 'none');
-	$(".contain-30").show();
-		if($(window).width() >= 960){
-	$(".gallery-container-center").css('grid-template-rows', '45vw');
-	$(".gallery-container-center").css('grid-template-columns', '70vw');
-}
-	if($(window).width() <= 960){
-	$(".gallery-container-center").css('grid-template-rows',  '45vw');
-	$(".gallery-container-center").css('grid-template-columns', '70vw');
-}
-if($(window).width() <= 576){
-	$(".gallery-container-center").css('grid-template-rows',  '45vw');
-	$(".gallery-container-center").css('grid-template-columns', '70vw');
-}
-});
-
-
-$('.gallery').mouseenter(function(){
-	$(this).children().children().children().hide().slideDown(400); 
-	$(this).children().children().children().css('display', 'flex');
-	$(this).children().children().next().children().next().hide().slideDown(400);
-});
-$('.gallery').mouseleave(function(){
-	$(this).children().children().next().children().next('.gal-cont-text-bottom').show().slideUp(400);
-	$(this).children().children().children().show().slideUp(400);
-});
-
-$('.wrap').hide();
-
-$(".gallery").click(function(){
-	$('.gallery-container-center').hide();
-    $('.wrap').show();
-});	
-
-$('.category-1').click(function(){
-    $('.gallery-container-center').show();
-});
-
-
-$('.contain').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/сруб1/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/5.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/6.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/7.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/8.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/9.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/10.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){
-	$(this).next().hide().slideDown();
-	$(this).hide().slideUp();
-});
-$('.item').last().click(function(){
-$('.item').first().hide().slideDown();
-});
-$('.contain-value-title').text('Сруб 3х5.5 +кровельные работы. Осоргино');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');
-$('.service').hide();
-$('.size').text('3х5.5');
-var scrollTop = $('.category').offset().top; 
-$(document).scrollTop(scrollTop);
-});
-
-
-
-$('.contain-1').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/сруб2/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/сруб2/23.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 4,5х5 в лапу. Нагаево. Уфа');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('4,5х5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-	
-$('.contain-2').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/сруб1/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/5.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/6.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/7.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/8.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/9.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/10.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){
-$(this).next().hide().slideDown();
-$(this).hide().slideUp();});
-$('.item').last().click(function(){
-$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6,2на9,2 (1 этаж) 8,2на9,2 (2этаж)');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('8,2х9,2');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-$('.contain-3').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/сруб2/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/5.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/6.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/7.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/8.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/9.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб2/10.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6.30 на 9.70 Нижегородка');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6.30х9.70');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-4').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/сруб1/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/5.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/6.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/7.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/8.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/9.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/сруб1/10.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6х8 мансардный+кровля');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6х8');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-5').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)/19.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 7х12 в лапу. Нижнеарметово (Ишимбайский район)');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('7х12');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-6').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 8х8 мансардный тип/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 8х8 мансардный тип/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 8х8 мансардный тип/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб 8х8 мансардный тип/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб 8х8 мансардный тип/17.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 8х8 мансардный тип');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('8х8');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-7').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 5х6/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 5х6/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 5х6/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 5х6/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 5х6/20.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в лапу 5х6');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('5х6');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-8').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/Сруб в лапу 6.5х6.5 +вынос 2.6 метра/16.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в лапу 6.5х6.5 +вынос 2.6 метра');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6.5х6.5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-$('.contain-9').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/23.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/24.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/25.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/26.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/27.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/28.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/В лапу/сруб в лапу 6.5х8.5 мансардный тип/29.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('сруб в лапу 6.5х8.5 мансардный тип');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6.5х8.5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-10').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/23.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/24.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/25.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/26.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/27.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/28.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/29.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/30.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/31.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/32.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/33.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/34.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/35.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/36.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/37.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/38.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/6х8 мансардный тип сруба/39.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6х8 мансардный тип');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('6х8');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-11').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 4,5х6,5 в чашу под баню/22.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 4,5х6,5 в чашу под баню');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('4,5х6,5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-12').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 6х8 с 5 стеной/10.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6х8 с 5 стеной');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('6х8 с 5 стеной');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-13').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/23.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/24.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/25.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/сруб 7х7 мансардный тип/26.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 7х7 мансардный тип');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('7х7');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-14').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/23.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/24.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/25.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/26.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/27.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/28.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/29.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/30.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/31.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/32.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/33.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/34.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/35.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб 10х10 в чашу с 5 стеной/36.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 10х10 в чашу с 5 стеной');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('10х10');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-15').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу/23.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в чашу');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').hide();$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-16').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 7.3х9.0 с высотой 3.2 метра/12.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в чашу 7.3х9.0 с высотой 3.2 метра');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('7.3х9.0');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-17').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/20.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/21.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/22.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/23.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/24.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/25.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/26.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/27.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/28.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/29.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/30.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/31.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/32.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/33.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/34.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/35.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/36.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/37.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон/38.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в чашу 8,5х10,5 с 5 стеной(мансардный тип)+вынос на балкон');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('8,5х10,5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-18').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/16.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/17.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/18.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/19.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 8х9 с высотой 6 метров (2 этажа)/20.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в чашу 8х9 с высотой 6 метров (2 этажа)');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу'); $('.service').show();
-$('.size').text('8x9');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-19').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/13.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/14.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/15.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Нижняя чаша/Сруб в чашу 9х11 и кровля/16.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в чашу 9х11 и кровля');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу');$('.service').hide();
-$('.size').text('9х11');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-20').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Кровля сруба с размерами 6.3х9.4/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Кровля сруба с размерами 6.3х9.4/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Кровля сруба с размерами 6.3х9.4/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Кровля сруба с размерами 6.3х9.4/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Кровля сруба с размерами 6.3х9.4/5.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Кровля сруба с размерами 6.3х9.4');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6.3x9.4');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-21').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Крыша для сруба с размерами 6.5 х 8.5/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Крыша для сруба с размерами 6.5 х 8.5/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Крыша для сруба с размерами 6.5 х 8.5/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Крыша для сруба с размерами 6.5 х 8.5/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Крыша для сруба с размерами 6.5 х 8.5/5.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Крыша для сруба с размерами 6.5 х 8.5');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6.5x8.5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-22').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 4.5х6 с ломанной кровлей/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 4.5х6 с ломанной кровлей/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 4.5х6 с ломанной кровлей/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 4.5х6 с ломанной кровлей/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 4.5х6 с ломанной кровлей/5.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 4.5х6 с ломанной кровлей');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('4.5x6');$('.slider').css('display', 'flex');$('.size').hide();
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-23').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8/5.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Кровля/Сруб 6х8');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').parent().hide();$('.service').hide();
-$('.size').size('6x8');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-24').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/сруб 6х8 полутораэтажа/1.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6х8 полутораэтажа');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').parent().hide(); $('.service').show();
-$('.size').text('6x8');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-25').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/11.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/12.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб 6х8 с выносом 2 метра. Кровля 8х8/13.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб 6х8 с выносом 2 метра. Кровля 8х8');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6х8');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-26').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 3х5.5/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 3х5.5/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 3х5.5/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 3х5.5/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб в лапу 3х5.5/5.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в лапу 3х5.5');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу'); $('.service').hide();
-$('.size').text('3x5');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-27').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 6х9/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 6х9/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 6х9/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 6х9/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Кровля/Сруб в лапу 6х9/5.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в лапу 6х9');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу');$('.service').hide();
-$('.size').text('6х9');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-
-$('.contain-28').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 9х12/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 9х12/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 9х12/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в лапу 9х12/4.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в лапу 9х12');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В лапу'); $('.service').hide();
-$('.size').text('9х12');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-29').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Кровля/Сруб в чашу 8х9 в чашу/1.jpg', class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб в чашу 8х9 в чашу');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('В чашу'); $('.service').hide();
-$('.size').text('8х9');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
-
-
-$('.contain-30').click(function(){var x = $(this);x.siblings().hide();x.children().hide();x.addClass('.wrap');x.hide();
-$('.wrap').css('display', 'flex');$('.wrap').children().css('display', 'flex');
-$('<img>', { src: 'img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/1.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/2.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/3.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: 'img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/4.jpg', class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/5.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/6.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/7.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/8.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/9.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/10.jpg", class: 'item'}).appendTo('.items');
-$('<img>', { src: "img/Проекты/Дикая рубка/Сруб  в диком стиле 6х9 - мансардный тип/11.jpg", class: 'item'}).appendTo('.items');
-$('.item').eq(0).siblings().hide();
-$('.item').click(function(){$(this).next().hide().slideDown();$(this).hide().slideUp();});
-$('.item').last().click(function(){$('.item').first().hide().slideDown();});
-$('.contain-value-title').text('Сруб  в диком стиле 6х9 - мансардный тип');
-$('.year').parent().hide();
-$('.place').parent().hide();
-$('.type').text('Дикая рубка');$('.service').hide();
-$('.size').text('6х9');$('.slider').css('display', 'flex');
-var scrollTop = $('.category').offset().top; $(document).scrollTop(scrollTop);
-});
 
 });
